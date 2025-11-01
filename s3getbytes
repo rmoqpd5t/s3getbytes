@@ -19,12 +19,17 @@ s3simple() {
 	fi
 	local path="${url:5}"
 
-	if [ -z "${AWS_ACCESS_KEY_ID-}" ]; then
-		echo "Need AWS_ACCESS_KEY_ID to be set"
+	if [ -z "${S3_ACCESS_KEY_ID-}" ]; then
+		echo "Need S3_ACCESS_KEY_ID to be set"
 		return 1
 	fi
 
-	if [ -z "${AWS_SECRET_ACCESS_KEY-}" ]; then
+	if [ -z "${S3_SECRET_ACCESS_KEY-}" ]; then
+		echo "Need AWS_SECRET_ACCESS_KEY to be set"
+		return 1
+	fi
+
+	if [ -z "${S3_HOSTNAME-}" ]; then
 		echo "Need AWS_SECRET_ACCESS_KEY to be set"
 		return 1
 	fi
@@ -69,17 +74,17 @@ s3simple() {
 	printf -v string_to_sign "%s\n%s\n\n%s\n%b%s" "$method" "$md5" "$date" "$aws_headers" "/$path"
 
 	local signature
-	signature=$(echo -n "$string_to_sign" | openssl sha1 -binary -hmac "${AWS_SECRET_ACCESS_KEY}" | openssl base64)
+	signature=$(echo -n "$string_to_sign" | openssl sha1 -binary -hmac "${S3_SECRET_ACCESS_KEY}" | openssl base64)
 
-	local authorization="AWS ${AWS_ACCESS_KEY_ID}:${signature}"
+	local authorization="AWS ${S3_ACCESS_KEY_ID}:${signature}"
 
 	local bucket="${path%%/*}"
 	local key="${path#*/}"
 
 	if [ $# -eq 4 ]; then
-		curl -v "${args[@]}" -s -f -H "Date: ${date}" -H "Authorization: ${authorization}" -H "Range: bytes=0-${bytes}" "https://object-arbutus.cloud.computecanada.ca/${bucket}/${key}"
+		curl -v "${args[@]}" -s -f -H "Date: ${date}" -H "Authorization: ${authorization}" -H "Range: bytes=0-${bytes}" "https://${S3_HOSTNAME}/${bucket}/${key}"
 	else
-		curl -v "${args[@]}" -s -f -H "Date: ${date}" -H "Authorization: ${authorization}" "https://object-arbutus.cloud.computecanada.ca/${bucket}/${key}"
+		curl -v "${args[@]}" -s -f -H "Date: ${date}" -H "Authorization: ${authorization}" "https://${S3_HOSTNAME}/${bucket}/${key}"
 	fi
 }
 
