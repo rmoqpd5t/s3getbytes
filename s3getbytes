@@ -25,12 +25,12 @@ s3simple() {
 	fi
 
 	if [ -z "${S3_SECRET_ACCESS_KEY-}" ]; then
-		echo "Need AWS_SECRET_ACCESS_KEY to be set"
+		echo "Need S3_SECRET_ACCESS_KEY to be set"
 		return 1
 	fi
 
 	if [ -z "${S3_HOSTNAME-}" ]; then
-		echo "Need AWS_SECRET_ACCESS_KEY to be set"
+		echo "Need S3_HOSTNAME to be set"
 		return 1
 	fi
 
