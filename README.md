@@ -1,5 +1,5 @@
 # s3getbytes
-Modification to s3simple adding the ability to specify the number of bytes to download
+Modification to [s3simple](https://github.com/paulhammond/s3simple) adding the ability to specify the number of bytes to download
 
 Useage example:
 ```
